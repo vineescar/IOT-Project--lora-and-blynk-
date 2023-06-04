@@ -11,6 +11,8 @@ At lora module at a time one way communication will happen synchronize the commu
 
 I attached a pdf file which contain all the details about the project
 
+main problem in this project is Lora SX1278 module at a time we can communicate on one direction so synchronizing the both side for communiction is more challege one..
+
 Arduino code,
 
 #include <SPI.h>
