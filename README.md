@@ -184,83 +184,83 @@ else if(collectU==100)
 
     delay(2000);
 
-        for (int i = 0; i < 10; i++){
-            int sensorValue1 = analogRead(SENSOR_PIN);       //conductivity start
-            float tdsValue = map(sensorValue1, 0, 1023, 0, 1000);  // Replace with your conversion function
-            Serial.print("Conductivity: ");
-            Serial.print(tdsValue);
-            Serial.println(" ppm ");                        //conductivity end
+    for (int i = 0; i < 10; i++){
+        int sensorValue1 = analogRead(SENSOR_PIN);       //conductivity start
+        float tdsValue = map(sensorValue1, 0, 1023, 0, 1000);  // Replace with your conversion function
+        Serial.print("Conductivity: ");
+        Serial.print(tdsValue);
+        Serial.println(" ppm ");                        //conductivity end
 
-            int turbidityValue = analogRead(TURBIDITY_PIN);          //Turbidity start
-            float turbidity = map(turbidityValue, 600, 0, 0, 100); 
-            Serial.print("Turbidity: ");
-            Serial.print(turbidity);
-            Serial.println("%");                                     //turbidity end
+        int turbidityValue = analogRead(TURBIDITY_PIN);          //Turbidity start
+        float turbidity = map(turbidityValue, 600, 0, 0, 100); 
+        Serial.print("Turbidity: ");
+        Serial.print(turbidity);
+        Serial.println("%");                                     //turbidity end
 
-            for(int i=0;i<10;i++)                                  //ph start
-            { 
-            buffer_arr[i]=analogRead(A0);
-            delay(30);
-            }
-            for(int i=0;i<9;i++)
-            {
-            for(int j=i+1;j<10;j++)
-            {
-            if(buffer_arr[i]>buffer_arr[j])
-            {
-            tempk=buffer_arr[i];
-            buffer_arr[i]=buffer_arr[j];
-            buffer_arr[j]=tempk;
-            }
-            }
-            }
-            avgval=0;
-            for(int i=2;i<8;i++)
-            avgval+=buffer_arr[i];
-            float volt=(float)avgval*5.0/1024/6; 
-            float ph_act = -5.70 * volt + calibration_value;
-            Serial.print("pH Val: ");
-            Serial.println(ph_act);                                //ph end
+        for(int i=0;i<10;i++)                                  //ph start
+        { 
+        buffer_arr[i]=analogRead(A0);
+        delay(30);
+        }
+        for(int i=0;i<9;i++)
+        {
+        for(int j=i+1;j<10;j++)
+        {
+        if(buffer_arr[i]>buffer_arr[j])
+        {
+        tempk=buffer_arr[i];
+        buffer_arr[i]=buffer_arr[j];
+        buffer_arr[j]=tempk;
+        }
+        }
+        }
+        avgval=0;
+        for(int i=2;i<8;i++)
+        avgval+=buffer_arr[i];
+        float volt=(float)avgval*5.0/1024/6; 
+        float ph_act = -5.70 * volt + calibration_value;
+        Serial.print("pH Val: ");
+        Serial.println(ph_act);                                //ph end
 
-            Serial.print("Requesting temperatures...");              //temperatutre start
-            sensors.requestTemperatures(); // Send the command to get temperatures
-            Serial.println("DONE");
-            float tempC = sensors.getTempCByIndex(0);
-            if(tempC != DEVICE_DISCONNECTED_C) 
-            {
-              Serial.print("Temperature for the device is: ");
-              Serial.println(tempC);
-            } 
-            else
-            {
-              Serial.println("Error: Could not read temperature data");
-            }                                                              //temperature end
+        Serial.print("Requesting temperatures...");              //temperatutre start
+        sensors.requestTemperatures(); // Send the command to get temperatures
+        Serial.println("DONE");
+        float tempC = sensors.getTempCByIndex(0);
+        if(tempC != DEVICE_DISCONNECTED_C) 
+        {
+          Serial.print("Temperature for the device is: ");
+          Serial.println(tempC);
+        } 
+        else
+        {
+          Serial.println("Error: Could not read temperature data");
+        }                                                              //temperature end
 
-            digitalWrite(trigPin, LOW);           //ultrasonic sensor
-            delayMicroseconds(2);
-            digitalWrite(trigPin, HIGH);     // send waves for 10 us
-            delayMicroseconds(10);
-            duration = pulseIn(echoPin, HIGH); // receive reflected waves
-            distance = duration / 58.2;        // convert to distance
-            Serial.print("distance: ");
-            Serial.print(distance);
-            Serial.println("cm");    
-            
-            Serial.print("Sending packet: ");
-            Serial.println(counter);
+        digitalWrite(trigPin, LOW);           //ultrasonic sensor
+        delayMicroseconds(2);
+        digitalWrite(trigPin, HIGH);     // send waves for 10 us
+        delayMicroseconds(10);
+        duration = pulseIn(echoPin, HIGH); // receive reflected waves
+        distance = duration / 58.2;        // convert to distance
+        Serial.print("distance: ");
+        Serial.print(distance);
+        Serial.println("cm");    
 
-            LoRa.beginPacket();
-            LoRa.write(tdsValue);
-            LoRa.write(turbidity);
-            LoRa.write(ph_act);
-            LoRa.write(tempC);
-            LoRa.write(distance);
-            LoRa.print("Hello from Arduino Uno ,");
-            LoRa.print(counter);
-            LoRa.endPacket();
+        Serial.print("Sending packet: ");
+        Serial.println(counter);
 
-            delay(2000);
-            
+        LoRa.beginPacket();
+        LoRa.write(tdsValue);
+        LoRa.write(turbidity);
+        LoRa.write(ph_act);
+        LoRa.write(tempC);
+        LoRa.write(distance);
+        LoRa.print("Hello from Arduino Uno ,");
+        LoRa.print(counter);
+        LoRa.endPacket();
+
+        delay(2000);
+
 
 }
 collectU = 0 ; 
